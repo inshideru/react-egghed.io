@@ -1,33 +1,34 @@
-import React, { Component } from 'react';
-import PropTypes from 'prop-types';
-import logo from './logo.svg';
-import './App.css';
+import React from 'react';
 
-class App extends Component {
+class App extends React.Component {
+  constructor() {
+    super();
+    this.state = { val: 0 };
+    this.update = this.update.bind(this);
+  }
+
+  update(e) {
+    this.setState({
+      val: e.target.value + 1
+    })
+  }
+
+  componentWillMount() {
+    console.log('componentWillMount')
+  }
+
+  componentDidMount() {
+    console.log('componentDidMount')
+  }
+
+  componentWillUnmount() {
+    console.log('componentWillUnmount')
+  }
+
   render() {
-    let txt = this.props.txt;
-    return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
-        </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload. <br/><br/>
-          { txt }
-        </p>
-      </div>
-    );
+    console.log('render');
+    return <button onClick={this.update}>{this.state.val}</button>
   }
 }
-
-App.propTypes = {
-  txt: PropTypes.string,
-  cat: PropTypes.number.isRequired
-};
-
-App.defaultProps = {
-  txt: "This is the default txt"
-};
 
 export default App;
