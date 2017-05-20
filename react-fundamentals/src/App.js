@@ -1,58 +1,60 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
 
-class App extends React.Component {
+/** Higher Order Component - Return other components */
+const HOC = (InnerComponent) => class extends React.Component {
   constructor() {
     super();
-    this.state = { val: 0 };
-    this.update = this.update.bind(this);
+
+    this.state = { count: 0 };
   }
 
-  update(e) {
-    this.setState({
-      val: this.state.val + 1
-    })
+  update() {
+    this.setState({ count: this.state.count + 1 });
   }
 
   componentWillMount() {
-    console.log('componentWillMount');
-    this.setState({ m: 2 });
-  }
-
-  componentDidMount() {
-    console.log('componentDidMount');
-    console.log(ReactDOM.findDOMNode(this));
-  }
-
-  componentWillUnmount() {
-    console.log('componentWillUnmount');
-
-  }
-
-  render() {
-    console.log('render');
-    return <button onClick={this.update}>{this.state.val * this.state.m}</button>
-  }
-}
-
-class Wrapper extends React.Component {
-  mount() {
-    ReactDOM.render(<App />, document.getElementById('a'))
-  }
-
-  unmount() {
-    ReactDOM.unmountComponentAtNode(document.getElementById('a'))
+    console.log('will mount');
   }
 
   render() {
     return (
-      <div>
-        <button onClick={this.mount.bind(this)}>Mount</button>
-        <button onClick={this.unmount.bind(this)}>Unount</button>
-        <div id="a"></div>
-      </div>
-    );
+      <InnerComponent
+        {...this.props}
+        {...this.state}
+        update={this.update.bind(this)}
+      />
+    )
   }
 }
 
-export default Wrapper;
+class App extends React.Component {
+  render() {
+
+    return (
+      <div>
+        <Button>button</Button>
+        <hr />
+        <LabelHOC>label</LabelHOC>
+      </div>
+    )
+  }
+}
+
+const Button = HOC((props) =>
+  <button onClick={props.update}>{props.children} - {props.count}</button>);
+
+class Label extends React.Component {
+  componentWillMount() {
+    console.log('label will mount')
+  }
+  render() {
+    return (
+      <label onMouseMove={this.props.update}>
+        {this.props.children} - {this.props.count}
+      </label>
+    )
+  }
+}
+
+const LabelHOC = HOC(Label);
+export default App;
