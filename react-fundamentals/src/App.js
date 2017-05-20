@@ -1,60 +1,72 @@
 import React from 'react';
-
-/** Higher Order Component - Return other components */
-const HOC = (InnerComponent) => class extends React.Component {
-  constructor() {
-    super();
-
-    this.state = { count: 0 };
-  }
-
-  update() {
-    this.setState({ count: this.state.count + 1 });
-  }
-
-  componentWillMount() {
-    console.log('will mount');
-  }
-
-  render() {
-    return (
-      <InnerComponent
-        {...this.props}
-        {...this.state}
-        update={this.update.bind(this)}
-      />
-    )
-  }
-}
+import ReactDOM from 'react-dom';
+import PropTypes from 'prop-types';
 
 class App extends React.Component {
-  render() {
-
+  constructor(){
+    super();
+    this.state = {
+      red: 0
+    }
+    this.update = this.update.bind(this)
+  }
+  update(e){
+    this.setState({
+      red: ReactDOM.findDOMNode(this.refs.red.refs.inp).value
+    })
+  }
+  render(){
     return (
       <div>
-        <Button>button</Button>
-        <hr />
-        <LabelHOC>label</LabelHOC>
+        <NumInput
+          ref="red"
+          min={0}
+          max={255}
+          step={0.01}
+          val={+this.state.red}
+          label="Red"
+          update={this.update} />
       </div>
-    )
+    );
   }
 }
 
-const Button = HOC((props) =>
-  <button onClick={props.update}>{props.children} - {props.count}</button>);
-
-class Label extends React.Component {
-  componentWillMount() {
-    console.log('label will mount')
-  }
-  render() {
+class NumInput extends React.Component {
+  render(){
+    let label = this.props.label !== '' ?
+      <label>{this.props.label} -  {this.props.val}</label> : ''
     return (
-      <label onMouseMove={this.props.update}>
-        {this.props.children} - {this.props.count}
-      </label>
-    )
+        <div>
+        <input ref="inp"
+          type={this.props.type}
+          min={this.props.min}
+          max={this.props.max}
+          step={this.props.step}
+          defaultValue={this.props.val}
+          onChange={this.props.update} />
+          {label}
+        </div>
+    );
   }
 }
 
-const LabelHOC = HOC(Label);
+NumInput.propTypes = {
+  min: PropTypes.number,
+  max: PropTypes.number,
+  step: PropTypes.number,
+  val: PropTypes.number,
+  label: PropTypes.string,
+  update: PropTypes.func.isRequired,
+  type: PropTypes.oneOf(['number', 'range'])
+}
+
+NumInput.defaultProps = {
+  min: 0,
+  max: 0,
+  step: 1,
+  val: 0,
+  label: '',
+  type: 'range'
+}
+
 export default App;

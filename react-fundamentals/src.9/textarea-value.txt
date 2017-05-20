@@ -1,0 +1,17 @@
+const App = (props) => {
+  const myStyle = {
+    backgroundColor: '#000',
+    height: 10  
+  }
+
+  return (
+    <div style={myStyle}>
+      <a href="#" notrendered="x" onClick={update}>
+        {/* this is a comment */}
+        this is theh text
+        { i > 1 ? 'More than one' : 'one' }
+        { i > 1 && 'More than one' }
+      </a>
+    </div>
+  );
+};
